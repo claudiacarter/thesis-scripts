@@ -36,7 +36,7 @@ ggmaplot(
   seed = 42,
   font.label = c(8, "plain", "black"),
   label.rectangle = FALSE,
-  palette = c("#4195F5", "#D21359", "#E4DEE0"),
+  palette = c("#40B0A6", "#B32240", "#E4DEE0"),
   top = 10,
   select.top.method = c("padj", "fc"),
   label.select = NULL,
