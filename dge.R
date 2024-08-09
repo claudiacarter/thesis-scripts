@@ -46,20 +46,3 @@ res <- results(dds)
 res
 
 write.csv(res, "result.csv")
-----------------
-# Explore Results 
-
-summary(res)
-
-res0.01 <- results(dds, alpha = 0.01)
-summary(res0.01)
-
-# contrasts
-resultsNames(dds)
-
-# e.g.: treated, untreated
-
-results(dds, contrast = c("control", "infected"))
-
-# MA plot
-plotMA(res)
