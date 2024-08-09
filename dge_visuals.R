@@ -1,14 +1,7 @@
-# BiocManager::install("clusterProfiler")
-# BiocManager::install("pathview")
-# BiocManager::install("enrichplot")
-# BiocManager::install(organism, character.only = TRUE)
-# devtools::install_github('btmonier/ggDESeq')
-
+library(DESeq2)
 library(clusterProfiler)
 library(enrichplot)
 library(ggplot2)
-# options for data vis:
-library(ggDESeq)
 library(ggpubr)
 
 #==Set Rattus norvegicus as organism annotation to load==
@@ -16,14 +9,7 @@ library("org.Rn.eg.db", character.only = TRUE)  # Load annotation for Rattus nor
 keytypes(org.Rn.eg.db)  # display available datasets to use
 
 #==Generate visualisations of DESeq2 Output==
-# using ggDESeq:
-#ggMA(data=dds,padj=0.01,lfc=1)
-ggVolcano(data = dds, padj = 0.1)
-ggMA(data=dds, padj=0.05, lfc=2)
-
-# using DESeq's own plots:
-plotMA(dds, ylim = c(-2, 2))
-
+# Principal Component Analysis
 rld <- rlog(dds)
 plotPCA(rld,intgroup=c("sample_status"), ntop = 500, returnData=FALSE) + 
   geom_point(aes(color=group)) + 
@@ -33,15 +19,17 @@ plotPCA(rld,intgroup=c("sample_status"), ntop = 500, returnData=FALSE) +
                                   colour="#3a414a",
                                   face = "bold"))
 
-# using ggpubr:
+# MA plot
+# sort results most to least significant (by Padj) so all NS are plotted first
+
 ggmaplot(
-  data = res,
+  data = res[order(res$padj),],
   fdr = 0.05,
   fc = 4, # a fold change of 4 is log2 fold change 2
   genenames = NULL,
   detection_call = NULL,
-  size = 1,
-  alpha = 0.5,
+  size = 1.25,
+  alpha = 0.7,
   seed = 42,
   font.label = c(8, "plain", "black"),
   label.rectangle = FALSE,
@@ -49,13 +37,13 @@ ggmaplot(
   top = 10,
   select.top.method = c("padj", "fc"),
   label.select = NULL,
-  main = "Differentially Expressed Genes",
   xlab = expression(log[2]~mean~expression),
   ylab = expression(log[2]~fold~change),
-  ggtheme = theme_classic())
-
-# using ggplot2 and ggrepel to make a custom:
-
+  ggtheme = theme_classic()) + 
+  ggtitle("Differentially Expressed Genes") +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  colour="#3a414a",
+                                  face = "bold"))
 
 
 #==Prep data for clusterProfiler==
