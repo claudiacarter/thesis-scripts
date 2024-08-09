@@ -20,10 +20,10 @@ plotPCA(rld,intgroup=c("sample_status"), ntop = 500, returnData=FALSE) +
                                   face = "bold"))
 
 # MA plot
-# sort results most to least significant (by Padj) so all NS are plotted first
+ma_data <- na.omit(res[order(res$padj),])
 
 ggmaplot(
-  data = res[order(res$padj),],
+  data = ma_data,
   fdr = 0.05,
   fc = 4, # a fold change of 4 is log2 fold change 2
   genenames = NULL,
