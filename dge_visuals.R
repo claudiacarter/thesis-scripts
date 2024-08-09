@@ -24,6 +24,15 @@ ggMA(data=dds, padj=0.05, lfc=2)
 # using DESeq's own plots:
 plotMA(dds, ylim = c(-2, 2))
 
+rld <- rlog(dds)
+plotPCA(rld,intgroup=c("sample_status"), ntop = 500, returnData=FALSE) + 
+  geom_point(aes(color=group)) + 
+  scale_color_manual(values = c('#244061','#FFC107')) +
+  ggtitle("PCA of Differential Gene Expression") + 
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  colour="#3a414a",
+                                  face = "bold"))
+
 # using ggpubr:
 ggmaplot(
   data = res,
