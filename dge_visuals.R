@@ -4,8 +4,9 @@ library(enrichplot)
 library(ggplot2)
 library(ggpubr)
 
-#==Set Rattus norvegicus as organism annotation to load==
-library("org.Rn.eg.db", character.only = TRUE)  # Load annotation for Rattus norvegicus
+#==Set Rattus norvegicus as organism annotation to load== # check still needed
+organism = "org.Rn.eg.db"
+library(organism, character.only = TRUE)  # Load annotation for Rattus norvegicus
 keytypes(org.Rn.eg.db)  # display available datasets to use
 
 #==Generate visualisations of DESeq2 Output==
@@ -18,6 +19,7 @@ plotPCA(rld,intgroup=c("sample_status"), ntop = 500, returnData=FALSE) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   colour="#3a414a",
                                   face = "bold"))
+
 
 # MA plot
 ma_data <- na.omit(res[order(res$padj),])
@@ -45,11 +47,31 @@ ggmaplot(
                                   colour="#3a414a",
                                   face = "bold"))
 
+#==Gene Set Enrichment Plots==
+# DotPlot [not used in final report]
+require(DOSE) # may need to cite this in plot legend/ somewhere
+dotplot(gse, showCategory=10, split=".sign") + 
+  facet_grid(.~.sign) + 
+  theme(text = element_text(size=10)) + 
+  theme(axis.title.x=element_text(size=10)) +
+  theme(axis.text.x=element_text(size=rel(0.9))) + 
+  theme(axis.text.y=element_text(size=rel(0.9))) + 
+  ggtitle("Enrichment of Biological Process GO Terms in DEGs") +
+  theme(plot.title = element_text(size=10, 
+                                  hjust = 0.5, 
+                                  colour="#3a414a",
+                                  face = "bold"))
 
-#==Prep data for clusterProfiler==
-# read.csv("results.csv", header = TRUE)  # read in CSV if necessary
-og_genes <- res$log2FoldChange
-genes <- na.omit(og_genes)
-genes = sort(genes, decreasing = TRUE)
-
-#==
+# Ridge Plot [saving dimensions = w785*h900 for report]
+ridgeplot(gse) + labs(x = "Enrichment Distribution") +
+  scale_fill_continuous(name = "FDR", low='#40B0A6', high="#244061") +
+  geom_vline(aes(xintercept=0), colour="#808080", linetype="dashed") +
+  theme(text = element_text(size=10)) + 
+  theme(axis.title.x=element_text(size=10)) + 
+  theme(axis.text.x=element_text(size=rel(0.9))) + 
+  theme(axis.text.y=element_text(size=rel(0.9))) + 
+  ggtitle("Enrichment of Biological Process GO Terms in DEGs") +
+            theme(plot.title = element_text(size=10, 
+                                            hjust = 0.5, 
+                                            colour="#3a414a",
+                                            face = "bold"))

@@ -4,7 +4,6 @@
 library(DESeq2)
 library(tidyverse)
 library(clusterProfiler)
-library(enrichplot)
 
 #==Set Rattus norvegicus as organism annotation to load==
 organism = "org.Rn.eg.db"
@@ -58,19 +57,21 @@ write.csv(res, "result.csv")
 
 # Prep data for clusterProfiler
 og_genes <- res$log2FoldChange
+names(og_genes) <- rownames(res)
 genes <- na.omit(og_genes)
 genes = sort(genes, decreasing = TRUE)
 
+head(genes)
 
 # Gene Set Enrichment
 keytypes(org.Rn.eg.db)  # display available datasets to use
 gse <- gseGO(geneList=genes, 
              ont ="BP",  #Biological Process, can also take "CC", "MS" or "ALL"
-             keyType = "GENENAME", # hopefully this means Official Gene Symbol
-             nPerm = 100000, # at least 10,000 permutations recommended in docs, more = more accurate
-             minGSSize = 3, # gene group size params
+             keyType = "SYMBOL", 
+             minGSSize = 3, # allowing group sizes of 3-800
              maxGSSize = 800, 
              pvalueCutoff = 0.05, 
              verbose = TRUE, 
              OrgDb = organism, 
-             pAdjustMethod = "BH") #Benjamini-Hochberg methodology for P value adjustment (equals FDR)
+             pAdjustMethod = "fdr")
+
