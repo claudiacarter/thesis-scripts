@@ -73,5 +73,12 @@ filtered_per_transcript_df <- subset(per_transcript_df,
 length(rownames(filtered_per_transcript_df))
 head(filtered_per_transcript_df)
 
+# find duplicates (i.e. multiple transcripts -isoforms?- for one gene)
+transcript_freq <- data.frame(table(filtered_per_transcript_df$gene_symbol))
+transcript_freq <- subset(transcript_freq,
+                          Freq != 1)
+
+
+head(transcript_freq)
 # still need to differentiate between transcripts not expressed and transcripts
 # with no methylation?
