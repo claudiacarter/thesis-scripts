@@ -1,10 +1,3 @@
-if (!require("BiocManager", quietly = TRUE))
-install.packages("BiocManager", version='3.18')
- 
-BiocManager::install(version='3.18')
-BiocManager::install("biomaRt")
-
-library(biomaRt)
 library(tidyverse)
 
 # read in differential gene expression (DGE) data
@@ -41,9 +34,8 @@ per_transcript_df$infectedMean <- (per_transcript_df$freq_i2 + per_transcript_df
 per_transcript_df$DM_log2FC <- log2(per_transcript_df$infectedMean/per_transcript_df$DM_baseMean)
 head(per_transcript_df)
 
-# translate refseq IDs into gene symbols (submitted to NCBI site)
+# translate refseq IDs into gene symbols
 refseq_ids <- as.list(rownames(per_transcript_df))
-
 write.table(refseq_ids, 
             append = FALSE, 
             "m6A_genes.txt",
@@ -52,10 +44,34 @@ write.table(refseq_ids,
             col.names = FALSE, 
             quote = FALSE)
 
+#~~~submitted txt file to web tool NCBI databases for gene names and symbols~~~#
+
+gene_table <- read.csv("transcripts_to_genes.csv")
+head(gene_table)
+
+# checking all transcripts are present and in the same order as methylation data
+all(rownames(per_transcript_df) %in% gene_table$RefSeq.Transcript.ID)
+all(rownames(per_transcript_df) == gene_table$RefSeq.Transcript.ID)
+
+# add gene symbol column into dataframe
+per_transcript_df <- cbind(gene_symbol=gene_table$Symbol, per_transcript_df)
+head(per_transcript_df)
 
 
-# merge gene symbol column into dataframe
-cbind(gene_symbol=0, per_transcript_df)
+
+# Subset genes that didn't have 0 as mean of control or infected
+
+# This is to make sure I'm only dealing with differentially methylated genes 
+# and not just ones that aren't expressed in control/infectious state.
+# I'm sure there's a better way to do this but for the purposes of the plot 
+# it's okay.
+
+filtered_per_transcript_df <- subset(per_transcript_df,
+                                      DM_log2FC != Inf & DM_log2FC != -Inf,
+                                      select=c(gene_symbol, DM_log2FC))
+
+length(rownames(filtered_per_transcript_df))
+head(filtered_per_transcript_df)
 
 # still need to differentiate between transcripts not expressed and transcripts
 # with no methylation?
