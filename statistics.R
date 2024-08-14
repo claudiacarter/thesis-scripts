@@ -1,5 +1,5 @@
 # define control_percentmeth and infected_percent_meth
-
+#read csv of each FULL m6anet result
 
 # t tests
 sink(file="welch_test.txt")
