@@ -50,8 +50,9 @@ ggmaplot(
 #==Gene Set Enrichment Plots==
 # DotPlot [not used in final report]
 require(DOSE) # may need to cite this in plot legend/ somewhere
-dotplot(gse, showCategory=10, split=".sign") + 
+dotplot(gse, showCategory=12, split=".sign") + 
   facet_grid(.~.sign) + 
+  scale_fill_continuous(name = "FDR", low='#40B0A6', high="#244061") +
   theme(text = element_text(size=10)) + 
   theme(axis.title.x=element_text(size=10)) +
   theme(axis.text.x=element_text(size=rel(0.9))) + 
