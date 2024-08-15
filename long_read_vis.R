@@ -74,3 +74,13 @@ plot_grid(control_logo, infected_logo, ncol = 1, align = 'v')
 
 #==compare transcript methylation levels==
 
+dge <- filter(degs, gene_symbol %in% datapoints)
+dm <- filter(filtered_per_transcript_df, gene_symbol %in% datapoints)
+dge_dm <- merge(dge, dm)
+dge_dm
+
+dge_dm_plot <- ggplot(dge_dm, aes(DGE_log2FC, DM_log2FC), scale="globalminmax") +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_point() +
+  theme_minimal()

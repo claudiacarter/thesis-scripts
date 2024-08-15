@@ -11,6 +11,11 @@ all_genes <- as.data.frame(res)
 all_genes <- all_genes[c("log2FoldChange", "padj")]
 colnames(all_genes) <- c("DGE_log2FC", "DGE_Padj")
 
+degs <- subset(all_genes, DGE_Padj < 0.05, select = DGE_log2FC)
+degs <- cbind(gene_symbol = rownames(degs), data.frame(degs, row.names=NULL))
+head(degs)
+
+
 # table freq.s of methylation sites per represented transcript (non-redundant)
 # note: data pre-filtered for >0.9 probability
 
@@ -83,7 +88,8 @@ head(filtered_per_transcript_df)
 transcript_freq <- data.frame(table(filtered_per_transcript_df$gene_symbol))
 transcript_freq <- subset(transcript_freq,
                           Freq != 1)
-
-
 head(transcript_freq)
 
+# find genes with sufficient DGE and DM data to avoid NAs
+datapoints <- intersect(filtered_per_transcript_df$gene_symbol, degs$gene_symbol)
+length(datapoints)
