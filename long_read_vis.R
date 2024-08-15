@@ -1,11 +1,5 @@
 library("ggseqlogo")
 
-#==load in site level m6Anet results==
-c2_m6A_site <- read.csv('c2_data.site_proba_tra_filtered.csv')
-c3_m6A_site <- read.csv('c3_data.site_proba_tra_filtered.csv')
-i2_m6A_site <- read.csv('i2_data.site_proba_tra_filtered.csv')
-i3_m6A_site <- read.csv('i3_data.site_proba_tra_filtered.csv')
-
 #==visualising the DRACH motifs methylated==
 motifs_c2 <- as.vector(c2_m6A_site$kmer)
 motifs_c3 <- as.vector(c3_m6A_site$kmer)

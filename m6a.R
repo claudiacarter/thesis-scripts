@@ -1,5 +1,11 @@
 library(tidyverse)
 
+#==load in site level m6Anet results==
+c2_m6A_site <- read.csv('c2_data.site_proba_tra_filtered.csv')
+c3_m6A_site <- read.csv('c3_data.site_proba_tra_filtered.csv')
+i2_m6A_site <- read.csv('i2_data.site_proba_tra_filtered.csv')
+i3_m6A_site <- read.csv('i3_data.site_proba_tra_filtered.csv')
+
 # read in differential gene expression (DGE) data
 all_genes <- as.data.frame(res)
 all_genes <- all_genes[c("log2FoldChange", "padj")]
@@ -80,5 +86,4 @@ transcript_freq <- subset(transcript_freq,
 
 
 head(transcript_freq)
-# still need to differentiate between transcripts not expressed and transcripts
-# with no methylation?
+
