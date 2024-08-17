@@ -79,8 +79,15 @@ dm <- filter(filtered_per_transcript_df, gene_symbol %in% datapoints)
 dge_dm <- merge(dge, dm)
 dge_dm
 
-dge_dm_plot <- ggplot(dge_dm, aes(DGE_log2FC, DM_log2FC), scale="globalminmax") +
-  geom_vline(xintercept = 0, linetype = 2) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_point() +
-  theme_minimal()
+dge_dm_plot <- ggplot(dge_dm, 
+                      aes(DGE_log2FC, DM_log2FC, label = label),
+                      scale="globalminmax") +
+                     geom_vline(xintercept = 0, linetype = 1, colour = "#3a414a") +
+                     geom_hline(yintercept = 0, linetype = 1, colour = "#3a414a") +
+                     geom_point(colour = ifelse(dge_dm$DM_log2FC != 0, "#244061", "#707b7c")) +
+                     geom_text_repel(max.overlaps = 5, size = 3) + 
+                     theme_grey() +
+                     ggtitle("Differential Methylation vs Differential Expression") +
+                     theme(plot.title = element_text(hjust = 0.5, 
+                                      colour="#3a414a",
+                                      face = "bold"))
