@@ -1,4 +1,5 @@
 library("ggseqlogo")
+library("ggeasy")
 
 #==visualising the DRACH motifs methylated==
 motifs_c2 <- as.vector(c2_m6A_site$kmer)
