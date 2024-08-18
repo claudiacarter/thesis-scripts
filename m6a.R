@@ -1,4 +1,9 @@
 library(tidyverse)
+library(clusterProfiler)
+
+#==Set Rattus norvegicus as organism annotation to load==
+organism = "org.Rn.eg.db"
+library(organism, character.only = TRUE)  # Load annotation for Rattus norvegicus
 
 #==load in site level m6Anet results==
 c2_m6A_site <- read.csv('c2_data.site_proba_tra_filtered.csv')
@@ -77,19 +82,46 @@ head(per_transcript_df)
 # I'm sure there's a better way to do this but for the purposes of the plot 
 # it's okay.
 
-filtered_per_transcript_df <- subset(per_transcript_df,
-                                      DM_log2FC != Inf & DM_log2FC != -Inf,
-                                      select=c(gene_symbol, DM_log2FC))
+dge_dm_genes <- subset(per_transcript_df,
+                       DM_log2FC != Inf & DM_log2FC != -Inf,
+                       select=c(gene_symbol, DM_log2FC))
 
-length(rownames(filtered_per_transcript_df))
-head(filtered_per_transcript_df)
+length(rownames(dge_dm_genes))
+head(dge_dm_genes)
 
 # find duplicates (i.e. multiple transcripts -isoforms?- for one gene)
-transcript_freq <- data.frame(table(filtered_per_transcript_df$gene_symbol))
+transcript_freq <- data.frame(table(dge_dm_genes$gene_symbol))
 transcript_freq <- subset(transcript_freq,
                           Freq != 1)
 head(transcript_freq)
 
 # find genes with sufficient DGE and DM data to avoid NAs
-datapoints <- intersect(filtered_per_transcript_df$gene_symbol, degs$gene_symbol)
-length(datapoints)
+dge_dm_datapoints <- intersect(dge_dm_genes$gene_symbol, degs$gene_symbol)
+length(dge_dm_datapoints)
+
+# find genes with over 2 fold change in methylation
+dm_genes <- subset(per_transcript_df,
+                   DM_log2FC != Inf & DM_log2FC > 1 | DM_log2FC != -Inf & DM_log2FC < -1,
+                   select=c(gene_symbol, DM_log2FC))
+
+dm_genes <- dm_genes[order(dm_genes$DM_log2FC, decreasing = TRUE),]
+anyDuplicated(dm_genes$gene_symbol) # any genes with differential methylation in multiple transcripts
+length(rownames(dm_genes))
+
+# Gene set enrichment of differential methylation genes
+dm_go <- dm_genes$DM_log2FC
+names(dm_go) <- dm_genes$gene_symbol
+head(dm_go)
+
+keytypes(org.Rn.eg.db)  # display available datasets to use
+dm_gse <- gseGO(geneList=dm_go, 
+             ont ="BP",  #Biological Process, can also take "CC", "MS" or "ALL"
+             keyType = "SYMBOL", 
+             minGSSize = 3, # allowing group sizes of 3-800
+             maxGSSize = 800, 
+             pvalueCutoff = 0.1, 
+             verbose = TRUE, 
+             OrgDb = organism, 
+             pAdjustMethod = "fdr")
+
+ridgeplot(dm_gse)
