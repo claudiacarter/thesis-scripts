@@ -1,6 +1,8 @@
 library("ggseqlogo")
 library("ggplot2")
 library("ggeasy")
+library("VennDiagram")
+library("cowplot")
 set.seed(42)
 
 #==visualising the DRACH motifs methylated==
@@ -75,10 +77,64 @@ infected_logo <- ggseqlogo(motifs_i,
 
 plot_grid(control_logo, infected_logo, ncol = 1, align = 'v')
 
-#==compare transcript methylation levels==
+#==analysis of transcript methylation vs expression ==
+# in subset of genes with over 2 fold (i.e.log2(1) ) differential methylation
+
+# in all differntially methylated genes
+vA <- venn.diagram(
+  x = list(degs$gene_symbol, non_redundant_dm),
+  category.names = c("All\nDGE" , "All\nDM"),
+  filename = NULL, #'venn_allDM.png',
+#  output=TRUE,
+#  imagetype="png" ,
+  height = 500 , 
+  width = 500 , 
+  resolution = 300,
+  compression = "lzw",
+  ext.text = FALSE,
+  lwd = 1,
+  lty = 'blank',
+  fill = c(alpha('#40B0A6',0.8), alpha('#FFC107',0.8)),
+  cex = 0.7,
+  fontfamily = "sans",
+  cat.cex = 0.7,
+  cat.default.pos = "outer",
+  cat.fontfamily = "sans"
+)
+vB <- venn.diagram(
+  x = list(degs$gene_symbol, dm_genes$gene_symbol),
+  category.names = c("All\nDGE" , "DM\nFC>2"),
+  filename = NULL, #'venn_DMFC2.png',
+  #  output=NULL,
+  #  imagetype="png" ,
+  height = 500 , 
+  width = 500 , 
+  resolution = 300,
+  compression = "lzw",
+  ext.line.lwd = 0.5,
+  ext.dist = -0.05,
+  ext.pos = 180,
+  lwd = 1,
+  lty = 'blank',
+  fill = c(alpha('#40B0A6',0.8), alpha('#FFC107',0.8)),
+  cex = 0.7,
+  fontfamily = "sans",
+  cat.cex = 0.7,
+  cat.default.pos = "outer",
+  cat.fontfamily = "sans"
+)
+
+cowplot::plot_grid(vA, vB, 
+                   align = "h",
+                   labels = c("A","B"),
+                   label_colour = "#3a414a",
+                   scale = c(1, 0.7)
+)
+
 
 dge <- filter(degs, gene_symbol %in% dge_dm_datapoints)
 dm <- filter(filtered_per_transcript_df, gene_symbol %in% dge_dm_datapoints)
+
 dge_dm <- merge(dge, dm)
 dge_dm
 
@@ -90,7 +146,13 @@ dge_dm_plot <- ggplot(dge_dm,
                       geom_point(colour = ifelse(dge_dm$DM_log2FC != 0, "#244061", "#707b7c")) +
                       geom_text_repel(max.overlaps = 5, size = 3) + 
                       theme_grey() +
-                      ggtitle("Differential Methylation vs Differential Expression") +
-                      theme(plot.title = element_text(hjust = 0.5, 
+                      ggtitle("C") +
+                      theme(plot.title = element_text(#hjust = 0.5, 
                             colour="#3a414a",
                             face = "bold"))
+
+# plot for just DM genes (not DGE as well)
+ggplot(dm_genes, aes(x=gene_symbol,
+                     y=DM_log2FC))+
+  geom_col() +
+  coord_flip()
