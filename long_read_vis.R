@@ -82,7 +82,7 @@ plot_grid(control_logo, infected_logo, ncol = 1, align = 'v')
 
 # in all differntially methylated genes
 vA <- venn.diagram(
-  x = list(degs$gene_symbol, non_redundant_dm),
+  x = list(degs$gene_symbol, non_redundant_dm$gene_symbol),
   category.names = c("All\nDGE" , "All\nDM"),
   filename = NULL, #'venn_allDM.png',
 #  output=TRUE,

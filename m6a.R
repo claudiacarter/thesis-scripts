@@ -96,8 +96,13 @@ head(dge_dm_genes)
 
 
 sum(duplicated(dge_dm_genes$gene_symbol))
-non_redundant_dm <- unique(dge_dm_genes$gene_symbol)
-length(non_redundant_dm)
+non_zero_dm <- subset(dge_dm_genes,
+                      DM_log2FC != 0,
+                      select = gene_symbol)
+non_redundant_dm <- unique(non_zero_dm)
+head(non_redundant_dm)
+length(rownames(non_redundant_dm))
+
 
 
 # find duplicates (i.e. multiple transcripts -isoforms?- for one gene)
@@ -121,10 +126,19 @@ dm_genes <- dm_genes[order(dm_genes$DM_log2FC, decreasing = TRUE),]
 anyDuplicated(dm_genes$gene_symbol) # any genes with differential methylation in multiple transcripts
 length(rownames(dm_genes))
 
-for_ora <- as.list(dm_genes$gene_symbol)
-write.table(for_ora, 
+for_ora_dm <- as.list(dm_genes$gene_symbol)
+write.table(for_ora_dm, 
             append = FALSE, 
             "ora_dm_genes.txt",
+            sep = "\n", 
+            row.names = FALSE, 
+            col.names = FALSE, 
+            quote = FALSE)
+
+for_ora_dge_dm <- unique(c(as.list(degs$gene_symbol),as.list(non_redundant_dm$gene_symbol)))
+write.table(for_ora_dge_dm, 
+            append = FALSE, 
+            "ora_dge_dm_genes.txt",
             sep = "\n", 
             row.names = FALSE, 
             col.names = FALSE, 
