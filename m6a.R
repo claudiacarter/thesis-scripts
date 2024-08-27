@@ -19,7 +19,13 @@ colnames(all_genes) <- c("DGE_log2FC", "DGE_Padj")
 degs <- subset(all_genes, DGE_Padj < 0.05, select = DGE_log2FC)
 degs <- cbind(gene_symbol = rownames(degs), data.frame(degs, row.names=NULL))
 head(degs)
-
+length(rownames(degs))
+write.table(degs$gene_symbol,append = FALSE, 
+            "dge_genes.txt",
+            sep = "\n", 
+            row.names = FALSE, 
+            col.names = FALSE, 
+            quote = FALSE)
 
 # table freq.s of methylation sites per represented transcript (non-redundant)
 # note: data pre-filtered for >0.9 probability
@@ -74,7 +80,6 @@ per_transcript_df <- cbind(gene_symbol=gene_table$Symbol, per_transcript_df)
 head(per_transcript_df)
 
 
-
 # Subset genes that didn't have 0 as mean of control or infected
 
 # This is to make sure I'm only dealing with differentially methylated genes 
@@ -88,6 +93,12 @@ dge_dm_genes <- subset(per_transcript_df,
 
 length(rownames(dge_dm_genes))
 head(dge_dm_genes)
+
+
+sum(duplicated(dge_dm_genes$gene_symbol))
+non_redundant_dm <- unique(dge_dm_genes$gene_symbol)
+length(non_redundant_dm)
+
 
 # find duplicates (i.e. multiple transcripts -isoforms?- for one gene)
 transcript_freq <- data.frame(table(dge_dm_genes$gene_symbol))
@@ -103,25 +114,19 @@ length(dge_dm_datapoints)
 dm_genes <- subset(per_transcript_df,
                    DM_log2FC != Inf & DM_log2FC > 1 | DM_log2FC != -Inf & DM_log2FC < -1,
                    select=c(gene_symbol, DM_log2FC))
+length(rownames(dm_genes))
+head(dm_genes)
 
 dm_genes <- dm_genes[order(dm_genes$DM_log2FC, decreasing = TRUE),]
 anyDuplicated(dm_genes$gene_symbol) # any genes with differential methylation in multiple transcripts
 length(rownames(dm_genes))
 
-# Gene set enrichment of differential methylation genes
-dm_go <- dm_genes$DM_log2FC
-names(dm_go) <- dm_genes$gene_symbol
-head(dm_go)
+for_ora <- as.list(dm_genes$gene_symbol)
+write.table(for_ora, 
+            append = FALSE, 
+            "ora_dm_genes.txt",
+            sep = "\n", 
+            row.names = FALSE, 
+            col.names = FALSE, 
+            quote = FALSE)
 
-keytypes(org.Rn.eg.db)  # display available datasets to use
-dm_gse <- gseGO(geneList=dm_go, 
-             ont ="BP",  #Biological Process, can also take "CC", "MS" or "ALL"
-             keyType = "SYMBOL", 
-             minGSSize = 3, # allowing group sizes of 3-800
-             maxGSSize = 800, 
-             pvalueCutoff = 0.1, 
-             verbose = TRUE, 
-             OrgDb = organism, 
-             pAdjustMethod = "fdr")
-
-ridgeplot(dm_gse)
