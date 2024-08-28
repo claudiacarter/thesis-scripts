@@ -2,7 +2,7 @@
 This repository contains scripts I have written for my thesis 'Changes in the host transcriptome and epitranscriptome in response to *Strongyloides ratti* infection'. Aside from the command line code, which is detailed in my thesis Methods section, all scripts necessary to reproduce my work are included here.
 
 # Contents
-| Script | Description | References |
+| Script | Description | Relevant Item |
 |--------|-------------|------------|
 | dge.R | XXX | Figure X |
 | dge_visuals.R | XXX | Figure X |
