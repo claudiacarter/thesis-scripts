@@ -4,9 +4,9 @@ This repository contains scripts I have written for my thesis 'Changes in the ho
 # Contents
 | Script | Description | Relevant Item |
 |--------|-------------|------------|
-| dge.R | XXX | Figure X |
-| dge_visuals.R | XXX | Figure X |
-| m6A.R | XXX | Figure X |
-| poly_A.R | XXX | Figure X |
-| long_read_vis.R | XXX | Figure X |
-| statistics.R | XXX | Figure X |
+| dge.R | Differential Gene Expression Analysis using DESeq2 | Methods |
+| dge_visuals.R | PCA scatterplot, DGE Volcano plot, Ridgeplot  | Figures 1, 2 and 3 |
+| m6A.R | DRACH motif analysis, comparison with DEGs | Methods |
+| poly_A.R | Exploratory analysis | NA for report |
+| long_read_vis.R | Sequence logos, Venn diagrams, DGE/DM scatterplot | Figures 4 and 5 |
+| statistics.R | Hypergeometric test | Methods |
