@@ -61,7 +61,7 @@ names(og_genes) <- rownames(res)
 genes <- na.omit(og_genes)
 genes = sort(genes, decreasing = TRUE)
 
-head(genes)
+length(genes)
 
 # Gene Set Enrichment
 keytypes(org.Rn.eg.db)  # display available datasets to use
