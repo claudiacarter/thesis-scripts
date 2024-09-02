@@ -4,7 +4,7 @@ This repository contains scripts I have written for my thesis 'Changes in the ho
 # Contents
 | Script | Description | Relevant Item |
 |--------|-------------|------------|
-| dge.R | Differential Gene Expression Analysis using DESeq2 | Methods |
+| dge.R | Differential Gene Expression Analysis using DESeq2, Gene Set Enrichment Analysis| Methods |
 | dge_visuals.R | PCA scatterplot, DGE Volcano plot, Ridgeplot  | Figures 1, 2 and 3 |
 | m6A.R | DRACH motif analysis, comparison with DEGs | Methods |
 | poly_A.R | Exploratory analysis | NA for report |
